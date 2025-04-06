@@ -6,7 +6,7 @@ import pandas as pd
 import streamlit as st
 import streamlit_authenticator as stauth
 import yaml
-from st_pages import add_page_title, show_pages
+from st_pages import add_page_title
 from yaml import SafeLoader
 
 from CONFIG import AUTH_SYSTEM_ENABLED
@@ -87,7 +87,16 @@ def get_backend_api_client():
 
 def auth_system():
     if not AUTH_SYSTEM_ENABLED:
-        show_pages(main_page() + private_pages() + public_pages())
+        pages = main_page() + private_pages() + public_pages()
+        # Create section headers and page links in sidebar
+        current_section = None
+        for page in pages:
+            if page.is_section:
+                st.sidebar.markdown(f"### {page.icon} {page.name}" if page.icon else f"### {page.name}")
+                current_section = page.name
+            else:
+                page_label = f"{page.icon} {page.name}" if page.icon else page.name
+                st.sidebar.markdown(f"[{page_label}]({page.path})")
     else:
         with open('credentials.yml') as file:
             config = yaml.load(file, Loader=SafeLoader)
@@ -99,7 +108,16 @@ def auth_system():
                 config['cookie']['key'],
                 config['cookie']['expiry_days'],
             )
-            show_pages(main_page() + public_pages())
+            pages = main_page() + public_pages()
+            # Create section headers and page links in sidebar
+            current_section = None
+            for page in pages:
+                if page.is_section:
+                    st.sidebar.markdown(f"### {page.icon} {page.name}" if page.icon else f"### {page.name}")
+                    current_section = page.name
+                else:
+                    page_label = f"{page.icon} {page.name}" if page.icon else page.name
+                    st.sidebar.markdown(f"[{page_label}]({page.path})")
             st.session_state.authenticator.login()
             if st.session_state["authentication_status"] is False:
                 st.error('Username/password is incorrect')
@@ -108,4 +126,13 @@ def auth_system():
         else:
             st.session_state.authenticator.logout(location="sidebar")
             st.sidebar.write(f'Welcome *{st.session_state["name"]}*')
-            show_pages(main_page() + private_pages() + public_pages())
+            pages = main_page() + private_pages() + public_pages()
+            # Create section headers and page links in sidebar
+            current_section = None
+            for page in pages:
+                if page.is_section:
+                    st.sidebar.markdown(f"### {page.icon} {page.name}" if page.icon else f"### {page.name}")
+                    current_section = page.name
+                else:
+                    page_label = f"{page.icon} {page.name}" if page.icon else page.name
+                    st.sidebar.markdown(f"[{page_label}]({page.path})")

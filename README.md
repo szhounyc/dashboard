@@ -43,6 +43,10 @@ If you are a developer, and want to make changes to the code then we recommend u
 5. **Start the Dashboard**:
     ```bash
     make run
+
+    or 
+
+    streamlit run main.py
     ```
 
 For more detailed instructions on how to install and update the dashboard, refer to [INSTALLATION.md](INSTALLATION.md).
